@@ -144,6 +144,24 @@ You can set this globaly with the class method `key_format` (from inside your en
 Jbuilder.key_format :camelize => :lower
 ```
 
+Jbuilder uses MultiJson to turn ruby-objects into JSON. However, if you use ActiveSupport 4.*, you can
+force Jbuilder to use ActiveSupport::JSON instead. This might be useful if you plan to put the resulting
+JSON directly in HTML as a tag attribute or something similar, since ActiveSuppport::JSON performs
+additional escaping of resulting JSON to make it a bit less XSS-prone.
+
+`` ruby
+json.safe_escape! true
+json.foo "<script>XSS here</script>"
+
+# => { "foo": "\\u003Cscript\\u003EXSS here\\u003C/script\\u003E" }
+```
+
+You can also set this as a default using `safe_escape` method:
+
+``` ruby
+Jbuilder.safe_escape
+```
+
 Libraries similar to this in some form or another include:
 
 * RABL: https://github.com/nesquena/rabl

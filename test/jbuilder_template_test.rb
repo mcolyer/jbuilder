@@ -70,6 +70,20 @@ class JbuilderTemplateTest < ActionView::TestCase
     assert_equal 'two', result['LEVEL2']['VALUE']
   end
 
+  if ActiveSupport::VERSION::MAJOR == 4
+    test 'safe_escape! propagates to children' do
+      json = render_jbuilder <<-JBUILDER
+        json.safe_escape!
+        json.parent do
+          json.safe_escape! false
+          json.foo '<script>'
+        end
+      JBUILDER
+
+      assert_equal '{"parent":{"foo":"\\u003Cscript\\u003E"}}', json
+    end
+  end
+
   test 'partial! renders partial' do
     json = render_jbuilder <<-JBUILDER
       json.partial! 'partial'
